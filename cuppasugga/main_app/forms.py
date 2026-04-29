@@ -1,42 +1,30 @@
 from django import forms
-from django.forms import ValidationError
-from .models import Bag, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.core.exceptions import NON_FIELD_ERRORS
+from .models import UserProfile, Organization, Listing, VolunteerInterest
 
 
-class BagForm(forms.ModelForm):
-    class Meta:
-        model = Bag
-        fields = ('name','content')
-        help_texts = {
-          'help': ('String for now'),
-        }
-
-# return alphanumeric and whitespace values; no special chars
-    def clean_name(self):
-        name = self.cleaned_data['name']
-
-        if name.isprintable():
-            return name
-        raise ValidationError("Bag name can only be one word. Please try again")
-    
-# alphanumeric, whitespace, and commas only; no other special chars
-    def clean_content(self):
-        content = self.cleaned_data['content']
-        if content.isprintable():
-            return content
-        raise ValidationError("can only use letters, numbers, or ','s. please try again ")
-
-class UserCreateForm(UserCreationForm):
+class SignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
-class ProfileForm(forms.ModelForm):
+
+class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = Profile
-        fields = ('location', 'bio')
+        model = UserProfile
+        fields = ('display_name',)
+
+
+class OrganizationForm(forms.ModelForm):
+    class Meta:
+        model = Organization
+        fields = ('name',)
+
+
+class ListingForm(forms.ModelForm):
+    class Meta:
+        model = Listing
+        fields = ('listing_type', 'kind', 'category', 'title', 'description', 'price', 'is_volunteer', 'location')
